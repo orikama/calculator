@@ -14,6 +14,7 @@ find_package(Boost REQUIRED)
 
 set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
 
 
 # --------------- libcalc ---------------
@@ -43,3 +44,28 @@ set(calculator_SRC
 
 add_executable(calculator ${calculator_SRC})
 target_link_libraries(calculator PRIVATE libcalc)
+
+
+# --------------- libcalc TESTS ---------------
+if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
+    include(CTest)
+
+    #if(${BUILD_TESTING})
+        #add_subdirectory(tests)
+    set(libcalc_tests_SRC
+        ${TESTS_DIR}/main.cpp
+        ${TESTS_DIR}/test_libcalc_task.cpp
+    )
+    
+    add_executable(libcalc_tests ${libcalc_tests_SRC})
+    target_link_libraries(libcalc_tests
+        PRIVATE libcalc
+                Boost::unit_test_framework
+    )
+    
+    add_test(
+        NAME libcalc_tests
+        COMMAND $<TARGET_FILE:libcalc_tests>
+    )
+    #endif()
+endif()
