@@ -1,26 +1,26 @@
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/home/x3.hpp>
 
 #include <iostream>
 #include <string>
 
 
-namespace qi = boost::spirit::qi;
+namespace x3 = boost::spirit::x3;
 
 
 template<typename Iterator>
 bool parse_numbers(Iterator begin, const Iterator end)
 {
-    bool succedeed = qi::phrase_parse(
+    bool succedeed = x3::phrase_parse(
         begin, end,
-        qi::double_ >> *(',' >> qi::double_),
-        qi::ascii::space
+        x3::double_ >> *(',' >> x3::double_),
+        x3::ascii::space
     );
 
-    if (begin != end) {
-        return false;
+    if (succedeed && begin == end) {
+        return true;
     }
 
-    return succedeed;
+    return false;
 }
 
 
@@ -29,7 +29,7 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
-    if (parse_numbers(input.begin(), input.end())) {
+    if (parse_numbers(input.cbegin(), input.cend())) {
         std::cout << "Parsing succeeded\n";
     }
     else {
