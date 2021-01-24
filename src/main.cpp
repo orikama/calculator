@@ -1,6 +1,7 @@
 #include <boost/spirit/home/x3.hpp>
 
 #include <iostream>
+#include <optional>
 #include <string>
 
 
@@ -8,25 +9,24 @@ namespace x3 = boost::spirit::x3;
 
 
 template<typename Iterator>
-bool parse_numbers(Iterator begin, const Iterator end)
+std::optional<double> adder(Iterator begin, const Iterator end)
 {
-    auto print_int_attr = [](auto &ctx) { std::cout << "\tInt attr: " << x3::_attr(ctx) << std::endl; };
-    auto print_double_attr = [](auto &ctx) { std::cout << "\tDouble attr: " << x3::_attr(ctx) << std::endl; };
+    double sum = 0.0;
 
-    x3::real_parser<double, x3::strict_real_policies<double>> strict_double;
-    auto number = strict_double[print_double_attr] | x3::int_[print_int_attr];
+    auto assign = [&sum](auto &ctx) { sum = x3::_attr(ctx); };
+    auto add = [&sum](auto &ctx) { sum += x3::_attr(ctx); };
 
     bool succedeed = x3::phrase_parse(
         begin, end,
-        number >> *(',' >> number),
+        x3::double_[assign] >> *(',' >>  x3::double_[add]),
         x3::ascii::space
     );
 
     if (succedeed && begin == end) {
-        return true;
+        return sum;
     }
 
-    return false;
+    return {};
 }
 
 
@@ -35,8 +35,9 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
-    if (parse_numbers(input.cbegin(), input.cend())) {
-        std::cout << "Parsing succeeded\n";
+    if (const auto sum = adder(input.cbegin(), input.cend())) {
+        std::cout << "Parsing succeeded\n"
+            << "\tSum=" << sum.value() << '\n';
     }
     else {
         std::cout << "Parsing failed\n";
