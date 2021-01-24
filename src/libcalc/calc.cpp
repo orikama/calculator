@@ -1,14 +1,12 @@
-#include <boost/spirit/home/x3.hpp>
+#include <libcalc/calc.hpp>
 
-#include <iostream>
-#include <optional>
-#include <string>
+#include <boost/spirit/home/x3.hpp>
 
 
 namespace x3 = boost::spirit::x3;
 
 
-namespace calculator
+namespace
 {
     template<typename T>
     struct real_policy : x3::real_policies<T>
@@ -58,33 +56,23 @@ namespace calculator
         ;
 
     BOOST_SPIRIT_DEFINE(expression, term, factor);
-
-    std::optional<double> parse(std::string::const_iterator begin, std::string::const_iterator end)
-    {
-        double result;
-        bool succeeded = x3::phrase_parse(begin, end, expression, x3::space, result);
-
-        if (succeeded && begin == end) {
-            return result;
-        }
-
-        return {};
-    }
-}
+} // namespace
 
 
-int main()
+namespace calc
 {
-    std::string input;
-    std::getline(std::cin, input);
 
-    if (const auto result = calculator::parse(input.begin(), input.end())) {
-        std::cout << "Parsing succeeded\n"
-            << "\tResult=" << result.value() << std::endl;
-    }
-    else {
-        std::cout << "Parsing failed\n";
+std::optional<double>
+evaluate(std::string::const_iterator begin, std::string::const_iterator end)
+{
+    double result;
+    bool succeeded = x3::phrase_parse(begin, end, expression, x3::space, result);
+
+    if (succeeded && begin == end) {
+        return result;
     }
 
-    return 0;
+    return {};
 }
+
+} // namespace calc
