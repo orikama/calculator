@@ -1,26 +1,39 @@
-#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/home/x3.hpp>
 
 #include <iostream>
 #include <string>
 
 
-namespace qi = boost::spirit::qi;
+namespace x3 = boost::spirit::x3;
 
 
-template<typename Iterator>
-bool parse_numbers(Iterator begin, const Iterator end)
+namespace calculator
 {
-    bool succedeed = qi::phrase_parse(
-        begin, end,
-        qi::double_ >> *(',' >> qi::double_),
-        qi::ascii::space
-    );
+    const x3::rule<class expression> expression{"expression"};
+    const x3::rule<class term> term{"term"};
+    const x3::rule<class factor> factor{"factor"};
 
-    if (begin != end) {
+    const auto expression_def = term >> *( ('+' >> term) | ('-' >> term) );
+    const auto term_def = factor >> *( ('*' >> factor) | ('/' >> factor) );
+    const auto factor_def =
+        x3::uint_
+        | '(' >> expression >> ')'
+        | ('-' >> factor)
+        | ('+' >> factor)
+        ;
+
+    BOOST_SPIRIT_DEFINE(expression, term, factor);
+
+    bool parse(std::string::const_iterator begin, std::string::const_iterator end)
+    {
+        bool succeeded = x3::phrase_parse(begin, end, expression, x3::space);
+
+        if (succeeded && begin == end) {
+            return true;
+        }
+
         return false;
     }
-
-    return succedeed;
 }
 
 
@@ -29,7 +42,7 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
-    if (parse_numbers(input.begin(), input.end())) {
+    if (calculator::parse(input.begin(), input.end())) {
         std::cout << "Parsing succeeded\n";
     }
     else {
