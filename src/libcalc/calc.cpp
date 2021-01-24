@@ -25,10 +25,6 @@ namespace
 
     x3::real_parser<double, real_policy<double>> real_;
 
-    const x3::rule<class expression, double> expression{"expression"};
-    const x3::rule<class term, double> term{"term"};
-    const x3::rule<class factor, double> factor{"factor"};
-
     const auto zero = [](auto &ctx){ x3::_val(ctx) = 0; };
     const auto mov = [](auto &ctx){ x3::_val(ctx) = x3::_attr(ctx); };
     const auto add = [](auto &ctx){ x3::_val(ctx) += x3::_attr(ctx); };
@@ -37,25 +33,39 @@ namespace
     const auto div = [](auto &ctx){ x3::_val(ctx) /= x3::_attr(ctx); };
     const auto neg = [](auto &ctx){ x3::_val(ctx) = -x3::_attr(ctx); };
 
-    const auto expression_def =
+    const x3::rule<class ariphmetic_expression, double> ariphmetic_expression{"ariphmetic_expression"};
+    const x3::rule<class multiplicative,        double> multiplicative{"multiplicative"};
+    const x3::rule<class additive,              double> additive{"additive"};
+    const x3::rule<class unary,                 double> unary{"unary"};
+    const x3::rule<class primary,               double> primary{"primary"};
+
+    const auto ariphmetic_expression_def =
         x3::eps[zero]
-        >> term[mov]
-        >> *( ('+' >> term[add])
-            | ('-' >> term[sub])
-        );
-    const auto term_def =
-        factor[mov]
-        >> *( ('*' >> factor[mul])
-            | ('/' >> factor[div])
-        );
-    const auto factor_def =
-        real_[mov]
-        | '(' >> expression[mov] >> ')'
-        | ('-' >> factor[neg])
-        | ('+' >> factor[mov])
+        >> additive[mov]
+        ;
+    const auto additive_def =
+        multiplicative[mov]
+        >> *( (x3::char_('+') >> multiplicative[add])
+            | (x3::char_('-') >> multiplicative[sub])
+            )
+        ;
+    const auto multiplicative_def =
+        unary[mov]
+        >> *( (x3::char_('*') >> unary[mul])
+            | (x3::char_('/') >> unary[div])
+            )
+        ;
+    const auto unary_def =
+            primary[mov]
+        |   (x3::char_('-') >> primary[neg])
+        |   (x3::char_('+') >> primary[mov])
+        ;
+    const auto primary_def =
+            real_[mov]
+        |   x3::char_('(') >> additive[mov] >> x3::char_(')')
         ;
 
-    BOOST_SPIRIT_DEFINE(expression, term, factor);
+    BOOST_SPIRIT_DEFINE(ariphmetic_expression, multiplicative, additive, unary, primary);
 } // namespace
 
 
