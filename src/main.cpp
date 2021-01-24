@@ -10,9 +10,15 @@ namespace x3 = boost::spirit::x3;
 template<typename Iterator>
 bool parse_numbers(Iterator begin, const Iterator end)
 {
+    auto print_int_attr = [](auto &ctx) { std::cout << "\tInt attr: " << x3::_attr(ctx) << std::endl; };
+    auto print_double_attr = [](auto &ctx) { std::cout << "\tDouble attr: " << x3::_attr(ctx) << std::endl; };
+
+    x3::real_parser<double, x3::strict_real_policies<double>> strict_double;
+    auto number = strict_double[print_double_attr] | x3::int_[print_int_attr];
+
     bool succedeed = x3::phrase_parse(
         begin, end,
-        x3::double_ >> *(',' >> x3::double_),
+        number >> *(',' >> number),
         x3::ascii::space
     );
 
