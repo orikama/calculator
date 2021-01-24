@@ -63,10 +63,13 @@ namespace calc
 {
 
 std::optional<double>
-evaluate(std::string::const_iterator begin, std::string::const_iterator end)
+evaluate(std::string_view expression)
 {
     double result;
-    bool succeeded = x3::phrase_parse(begin, end, expression, x3::space, result);
+    auto begin = expression.cbegin();
+    auto end = expression.cend();
+
+    bool succeeded = x3::phrase_parse(begin, end, ariphmetic_expression, x3::space, result);
 
     if (succeeded && begin == end) {
         return result;

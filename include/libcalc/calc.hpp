@@ -1,13 +1,13 @@
 #pragma once
 
 #include <optional>
-#include <string>
+#include <string_view>
 
 
 namespace calc
 {
 
 std::optional<double>
-evaluate(std::string::const_iterator begin, std::string::const_iterator end);
+evaluate(std::string_view expression);
 
 } // namespace calc

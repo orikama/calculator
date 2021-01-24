@@ -1,6 +1,7 @@
 #include <libcalc/calc.hpp>
 
 #include <iostream>
+#include <string>
 
 
 int main()
@@ -8,7 +9,7 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
-    if (const auto result = calc::evaluate(input.begin(), input.end())) {
+    if (const auto result = calc::evaluate(input)) {
         std::cout << "Evaluation succeeded\n"
             << "\tResult=" << result.value() << std::endl;
     }
