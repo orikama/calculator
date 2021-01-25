@@ -21,11 +21,15 @@ set(TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
 set(libcalc_HEADERS_DIR "${INCLUDE_DIR}/libcalc")
 set(libcalc_HEADERS
     ${libcalc_HEADERS_DIR}/calc.hpp
+    ${libcalc_HEADERS_DIR}/detail/ast.hpp
+    ${libcalc_HEADERS_DIR}/detail/evaluator.hpp
+    ${libcalc_HEADERS_DIR}/detail/grammar.hpp
 )
 
 set(libcalc_SRC_DIR "${SRC_DIR}/libcalc")
 set(libcalc_SRC
     ${libcalc_SRC_DIR}/calc.cpp
+    ${libcalc_SRC_DIR}/detail/evaluator.cpp
 )
 
 add_library(libcalc STATIC ${libcalc_SRC} ${libcalc_HEADERS})
