@@ -7,7 +7,6 @@
 namespace calc
 {
 
-std::optional<double>
-evaluate(std::string_view expression);
+std::optional<double> evaluate(std::string_view expression);
 
 } // namespace calc
