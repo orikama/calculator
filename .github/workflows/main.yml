@@ -1,0 +1,77 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.config.os }}-${{ matrix.config.compiler }}-${{ matrix.config.version }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: windows-latest
+            compiler: msvc
+          - os: ubuntu-18.04
+            compiler: gcc
+            version: "7.4"
+          - os: macOS-latest
+            compiler: clang
+            version: "8"  
+
+    steps:
+      - name: Install dependencies
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sudo apt-get update
+            if [ "${{ matrix.config.compiler }}" = "gcc" ]; then
+              echo "CC=gcc-${{ matrix.config.version }}" >> $GITHUB_ENV
+              echo "CXX=g++-${{ matrix.config.version }}" >> $GITHUB_ENV
+              sudo apt install -y g++-${{ matrix.config.version }} g++-${{ matrix.config.version }}-multilib
+            elif [ "${{ matrix.config.compiler }}" = "clang" ]; then
+              echo "CC=clang-${{ matrix.config.version }}" >> $GITHUB_ENV
+              echo "CXX=clang++-${{ matrix.config.version }}" >> $GITHUB_ENV
+              sudo apt install -y clang-${{ matrix.config.version }} g++-multilib
+            fi
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 \
+              brew install ninja
+            if [ "${{ matrix.config.compiler }}" = "gcc" ]; then
+              brew install gcc@${{ matrix.config.version }}
+              echo "CC=gcc-${{ matrix.config.version }}" >> $GITHUB_ENV
+              echo "CXX=g++-${{ matrix.config.version }}" >> $GITHUB_ENV
+            else [ "${{ matrix.config.compiler }}" = "clang" ]; then
+              sudo xcode-select -switch /Applications/Xcode_${{ matrix.config.version }}.app
+              echo "CC=clang" >> $GITHUB_ENV
+              echo "CXX=clang++" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Get source
+        uses: actions/checkout@v2
+   
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Setup VS Environment
+        uses: seanmiddleditch/gha-setup-vsdevenv@master
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -G Ninja -DCMAKE_BUILD_TYPE:Release ..
+
+      - name: Build
+        run: cmake --build build --parallel
+  
+      - name: Test
+        run: |
+          cd build
+          ctest -T test --verbose
