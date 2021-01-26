@@ -1,6 +1,7 @@
 #include <libcalc/calc.hpp>
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 
@@ -10,7 +11,7 @@ int main()
     std::getline(std::cin, input);
 
     if (const auto result = calc::evaluate(input)) {
-        std::cout << "Result = " << result.value() << std::endl;
+        std::cout << std::fixed << std::setprecision(2) << "Result = " << result.value() << std::endl;
     }
     else {
         std::cout << "Parsing failed\n";
