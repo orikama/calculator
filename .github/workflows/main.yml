@@ -8,6 +8,10 @@ on:
 
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: ${{ matrix.config.os }}-${{ matrix.config.compiler }}-${{ matrix.config.version }}
