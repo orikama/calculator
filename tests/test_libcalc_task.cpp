@@ -20,13 +20,9 @@ BOOST_AUTO_TEST_CASE( libcalc_evaluate_tasks )
         BOOST_CHECK(result.has_value());
         BOOST_CHECK_EQUAL(expected_result, result.value());
     }
-
-    const auto invalid_task_expression = "1.1 + 2.1 + abc";
-    const auto invalid_result = calc::evaluate(invalid_task_expression);
-    BOOST_CHECK_EQUAL(false, invalid_result.has_value());
 }
 
-BOOST_AUTO_TEST_CASE( libcalc_evaluate_LOOOOOOOOOOOOOOOOL )
+BOOST_AUTO_TEST_CASE( libcalc_evaluate_main )
 {
     const std::initializer_list<std::pair<double, const char*>> expressions = {
         std::make_pair(13578619, "13578619"),

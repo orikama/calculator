@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
@@ -23,19 +24,19 @@ struct Operand : boost::spirit::x3::variant<
     using base_type::operator=;
 };
 
-struct Unary
+struct Unary : boost::spirit::x3::position_tagged
 {
     char operator_;
     Operand operand_;
 };
 
-struct Binary
+struct Binary : boost::spirit::x3::position_tagged
 {
     char operator_;
     Operand operand_;
 };
 
-struct Expression
+struct Expression : boost::spirit::x3::position_tagged
 {
     Operand first;
     std::list<Binary> rest;

@@ -10,8 +10,7 @@ int main()
     std::getline(std::cin, input);
 
     if (const auto result = calc::evaluate(input)) {
-        std::cout << "Evaluation succeeded\n"
-            << "\tResult=" << result.value() << std::endl;
+        std::cout << "Result = " << result.value() << std::endl;
     }
     else {
         std::cout << "Parsing failed\n";

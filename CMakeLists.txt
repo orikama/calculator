@@ -23,6 +23,7 @@ set(libcalc_HEADERS
     ${libcalc_HEADERS_DIR}/calc.hpp
     ${libcalc_HEADERS_DIR}/detail/ast.hpp
     ${libcalc_HEADERS_DIR}/detail/evaluator.hpp
+    ${libcalc_HEADERS_DIR}/detail/error_handler.hpp
     ${libcalc_HEADERS_DIR}/detail/grammar.hpp
 )
 
@@ -54,8 +55,6 @@ target_link_libraries(calculator PRIVATE libcalc)
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
     include(CTest)
 
-    #if(${BUILD_TESTING})
-        #add_subdirectory(tests)
     set(libcalc_tests_SRC
         ${TESTS_DIR}/main.cpp
         ${TESTS_DIR}/test_libcalc_task.cpp
@@ -71,5 +70,4 @@ if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
         NAME libcalc_tests
         COMMAND $<TARGET_FILE:libcalc_tests>
     )
-    #endif()
 endif()
