@@ -32,25 +32,31 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          if [ "${{ runner.os }}" = "Linux" ]; then
+          if [ "${{ runner.os }}" = "Linux" ]
+          then
             sudo apt-get update
-            if [ "${{ matrix.config.compiler }}" = "gcc" ]; then
+            if [ "${{ matrix.config.compiler }}" = "gcc" ]
+            then
               echo "CC=gcc-${{ matrix.config.version }}" >> $GITHUB_ENV
               echo "CXX=g++-${{ matrix.config.version }}" >> $GITHUB_ENV
               sudo apt install -y g++-${{ matrix.config.version }} g++-${{ matrix.config.version }}-multilib
-            elif [ "${{ matrix.config.compiler }}" = "clang" ]; then
+            elif [ "${{ matrix.config.compiler }}" = "clang" ]
+            then
               echo "CC=clang-${{ matrix.config.version }}" >> $GITHUB_ENV
               echo "CXX=clang++-${{ matrix.config.version }}" >> $GITHUB_ENV
               sudo apt install -y clang-${{ matrix.config.version }} g++-multilib
             fi
-          elif [ "${{ runner.os }}" = "macOS" ]; then
+          elif [ "${{ runner.os }}" = "macOS" ]
+          then
             HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 \
               brew install ninja
-            if [ "${{ matrix.config.compiler }}" = "gcc" ]; then
+            if [ "${{ matrix.config.compiler }}" = "gcc" ]
+            then
               brew install gcc@${{ matrix.config.version }}
               echo "CC=gcc-${{ matrix.config.version }}" >> $GITHUB_ENV
               echo "CXX=g++-${{ matrix.config.version }}" >> $GITHUB_ENV
-            else [ "${{ matrix.config.compiler }}" = "clang" ]; then
+            else [ "${{ matrix.config.compiler }}" = "clang" ]
+            then
               sudo xcode-select -switch /Applications/Xcode_${{ matrix.config.version }}.app
               echo "CC=clang" >> $GITHUB_ENV
               echo "CXX=clang++" >> $GITHUB_ENV
